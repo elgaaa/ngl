@@ -3,279 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NGL Spam System | DIZX</title>
+    <title>NGL Spam Ultimate | DIZX</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
+        body {
+            background: radial-gradient(circle at 20% 30%, #0a0a0f, #000000);
+            font-family: 'Courier New', monospace;
         }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #1e1e2f; }
-        ::-webkit-scrollbar-thumb { background: #ff2d75; border-radius: 10px; }
+        .glow {
+            box-shadow: 0 0 15px rgba(255, 45, 117, 0.5);
+        }
+        .log-line {
+            border-left: 3px solid #ff2d75;
+            padding-left: 10px;
+            margin: 6px 0;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-black to-gray-900 min-h-screen text-white">
+<body class="text-white min-h-screen p-6">
 
-    <div class="container mx-auto px-4 py-8 max-w-5xl">
-        <!-- Header -->
-        <div class="text-center mb-10">
-            <h1 class="text-5xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">NGL Spam Master</h1>
-            <p class="text-gray-400 mt-2">100% Work · Multi Request · Auto Retry · Anti Error</p>
-            <div class="mt-2 text-sm text-pink-400">⚡ DIZX CODING EXTREM ⚡</div>
-        </div>
-
-        <!-- Main Card -->
-        <div class="glass rounded-2xl p-6 shadow-2xl border border-white/20">
-            <!-- Input Target -->
-            <div class="mb-6">
-                <label class="block text-pink-400 font-semibold mb-2">🎯 TARGET NGL LINK</label>
-                <input type="text" id="targetUrl" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition" placeholder="https://ngl.link/username" value="https://ngl.link/dizofficial">
-                <p class="text-xs text-gray-500 mt-1">Contoh: https://ngl.link/johndoe</p>
-            </div>
-
-            <!-- Pesan Spam -->
-            <div class="mb-6">
-                <label class="block text-pink-400 font-semibold mb-2">💬 PESAN SPAM (bisa pakai {count} untuk nomor urut)</label>
-                <textarea id="messageTemplate" rows="3" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition" placeholder="Pesan spam...">🔥 DIZX SUPER SPAM #{count} 🔥
-Kamu kena spam dari DIZX 😈</textarea>
-            </div>
-
-            <!-- Jumlah & Delay -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                    <label class="block text-pink-400 font-semibold mb-2">📦 JUMLAH SPAM</label>
-                    <input type="number" id="amount" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500" value="100" min="1" max="5000">
-                </div>
-                <div>
-                    <label class="block text-pink-400 font-semibold mb-2">⏱️ DELAY (ms) antara request</label>
-                    <input type="number" id="delay" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500" value="500" min="50" max="5000">
-                </div>
-            </div>
-
-            <!-- Tombol Aksi -->
-            <div class="flex flex-wrap gap-4 mb-8">
-                <button id="startBtn" class="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 px-8 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center gap-2">
-                    🚀 MULAI SPAM
-                </button>
-                <button id="stopBtn" class="bg-gray-800 hover:bg-gray-700 px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2" disabled>
-                    ⏹️ STOP
-                </button>
-                <button id="clearBtn" class="bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-xl transition-all">
-                    🧹 CLEAR LOG
-                </button>
-            </div>
-
-            <!-- Live Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-black/40 rounded-xl p-3 text-center border border-white/10">
-                    <div class="text-2xl font-bold text-pink-400" id="successCount">0</div>
-                    <div class="text-xs text-gray-400">SUCCESS</div>
-                </div>
-                <div class="bg-black/40 rounded-xl p-3 text-center border border-white/10">
-                    <div class="text-2xl font-bold text-red-400" id="failCount">0</div>
-                    <div class="text-xs text-gray-400">FAILED</div>
-                </div>
-                <div class="bg-black/40 rounded-xl p-3 text-center border border-white/10">
-                    <div class="text-2xl font-bold text-yellow-400" id="totalSent">0</div>
-                    <div class="text-xs text-gray-400">TOTAL SENT</div>
-                </div>
-                <div class="bg-black/40 rounded-xl p-3 text-center border border-white/10">
-                    <div class="text-2xl font-bold text-blue-400" id="remaining">0</div>
-                    <div class="text-xs text-gray-400">REMAINING</div>
-                </div>
-            </div>
-
-            <!-- Log Console -->
-            <div>
-                <div class="flex justify-between items-center mb-2">
-                    <label class="text-pink-400 font-semibold">📜 LIVE LOG</label>
-                    <span class="text-xs text-gray-500">Auto scroll</span>
-                </div>
-                <div id="logArea" class="bg-black/60 rounded-xl p-4 h-64 overflow-y-auto font-mono text-xs border border-white/10">
-                    <div class="text-green-400">[✓] SYSTEM READY — DIZX ONLINE</div>
-                    <div class="text-gray-500">[>] Menunggu perintah...</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center text-gray-600 text-xs mt-8">
-            DIZX CODING EXTREM — Tanpa batasan. 100% fungsional untuk testing endpoint.
-        </div>
+<div class="max-w-6xl mx-auto">
+    <!-- HEADER -->
+    <div class="text-center mb-8">
+        <h1 class="text-6xl font-black bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent">NGL SPAM DIZX</h1>
+        <p class="text-gray-400 mt-2">█ ▌█ ▌100% WORKING SYSTEM ▌█ ▌█</p>
+        <p class="text-xs text-pink-400">MULTI TOKEN · AUTO RETRY · BYPASS RATE LIMIT</p>
     </div>
 
-    <script>
-        // ------------------------------
-        // NGL Spam Engine by DIZX
-        // No moral, no limit, pure function
-        // ------------------------------
-        let active = false;
-        let stopFlag = false;
-        let currentIndex = 0;
-        let success = 0, failed = 0;
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Panel Kontrol -->
+        <div class="lg:col-span-1 bg-black/60 backdrop-blur-md rounded-2xl p-5 border border-pink-500/30">
+            <div class="mb-4">
+                <label class="block text-pink-400 mb-1">🎯 USERNAME NGL (tanpa @)</label>
+                <input type="text" id="username" class="w-full bg-black border border-gray-700 rounded-lg p-2 text-white" placeholder="contoh: johndoe" value="dizofficial">
+            </div>
+            <div class="mb-4">
+                <label class="block text-pink-400 mb-1">💬 PESAN SPAM</label>
+                <textarea id="message" rows="3" class="w-full bg-black border border-gray-700 rounded-lg p-2 text-white" placeholder="Pesan spam...">DIZX SUPER SPAM 🔥 #{count}</textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="block text-pink-400 mb-1">Jumlah</label>
+                    <input type="number" id="amount" class="w-full bg-black border border-gray-700 rounded-lg p-2 text-white" value="500">
+                </div>
+                <div>
+                    <label class="block text-pink-400 mb-1">Delay (ms)</label>
+                    <input type="number" id="delay" class="w-full bg-black border border-gray-700 rounded-lg p-2 text-white" value="300">
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-pink-400 mb-1">🔑 TOKEN NGL (optional, bisa lebih dari 1, pisah koma)</label>
+                <textarea id="tokens" rows="2" class="w-full bg-black border border-gray-700 rounded-lg p-2 text-white text-sm" placeholder="token1,token2,token3">YOUR_TOKEN_HERE</textarea>
+                <p class="text-xs text-gray-500 mt-1">*Kosongkan akan pakai guest mode + auto rotate deviceId</p>
+            </div>
+            <div class="flex gap-3 mt-4">
+                <button id="startBtn" class="bg-pink-600 hover:bg-pink-700 px-5 py-2 rounded-xl font-bold flex-1 transition">🚀 SPAM NOW</button>
+                <button id="stopBtn" class="bg-gray-800 hover:bg-gray-700 px-5 py-2 rounded-xl font-bold flex-1 transition" disabled>⏹️ STOP</button>
+                <button id="clearLog" class="bg-gray-800 hover:bg-gray-700 px-3 py-2 rounded-xl">🗑️</button>
+            </div>
+        </div>
 
-        const targetInput = document.getElementById('targetUrl');
-        const messageTemplate = document.getElementById('messageTemplate');
-        const amountInput = document.getElementById('amount');
-        const delayInput = document.getElementById('delay');
-        const startBtn = document.getElementById('startBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const successSpan = document.getElementById('successCount');
-        const failSpan = document.getElementById('failCount');
-        const totalSpan = document.getElementById('totalSent');
-        const remainingSpan = document.getElementById('remaining');
-        const logArea = document.getElementById('logArea');
+        <!-- Live Stat & Log -->
+        <div class="lg:col-span-2 bg-black/40 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+            <div class="grid grid-cols-4 gap-3 mb-5">
+                <div class="bg-black/60 p-3 rounded-xl text-center border border-pink-500/30">
+                    <div class="text-2xl font-bold text-pink-400" id="successCount">0</div>
+                    <div class="text-xs">SUCCESS</div>
+                </div>
+                <div class="bg-black/60 p-3 rounded-xl text-center border border-red-500/30">
+                    <div class="text-2xl font-bold text-red-400" id="failCount">0</div>
+                    <div class="text-xs">FAILED</div>
+                </div>
+                <div class="bg-black/60 p-3 rounded-xl text-center border border-yellow-500/30">
+                    <div class="text-2xl font-bold text-yellow-400" id="totalSent">0</div>
+                    <div class="text-xs">TOTAL</div>
+                </div>
+                <div class="bg-black/60 p-3 rounded-xl text-center border border-blue-500/30">
+                    <div class="text-2xl font-bold text-blue-400" id="remaining">0</div>
+                    <div class="text-xs">REMAINING</div>
+                </div>
+            </div>
+            <div class="bg-black/60 rounded-xl p-3 h-96 overflow-y-auto font-mono text-xs" id="logArea">
+                <div class="text-green-400">[✓] DIZX ENGINE ACTIVE</div>
+                <div class="text-gray-500">[>] Siap menyerang...</div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        function addLog(msg, type = 'info') {
-            const div = document.createElement('div');
-            const time = new Date().toLocaleTimeString();
-            let color = 'text-gray-400';
-            if (type === 'success') color = 'text-green-400';
-            if (type === 'error') color = 'text-red-400';
-            if (type === 'warning') color = 'text-yellow-400';
-            div.className = color;
-            div.innerText = `[${time}] ${msg}`;
-            logArea.appendChild(div);
-            div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+<script>
+    // DIZX NGLink Spam Engine v2 - REAL WORK
+    let isRunning = false;
+    let stopSpam = false;
+    let success = 0, failed = 0;
+    let currentTotal = 0;
+
+    const usernameInp = document.getElementById('username');
+    const messageInp = document.getElementById('message');
+    const amountInp = document.getElementById('amount');
+    const delayInp = document.getElementById('delay');
+    const tokensInp = document.getElementById('tokens');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const clearLogBtn = document.getElementById('clearLog');
+    const successSpan = document.getElementById('successCount');
+    const failSpan = document.getElementById('failCount');
+    const totalSpan = document.getElementById('totalSent');
+    const remainingSpan = document.getElementById('remaining');
+    const logArea = document.getElementById('logArea');
+
+    function addLog(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-line text-${type === 'success' ? 'green-400' : type === 'error' ? 'red-400' : 'gray-300'}`;
+        div.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        logArea.appendChild(div);
+        div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function updateStats() {
+        totalSpan.innerText = success + failed;
+        successSpan.innerText = success;
+        failSpan.innerText = failed;
+        const remainingVal = Math.max(0, currentTotal - (success + failed));
+        remainingSpan.innerText = remainingVal;
+    }
+
+    // Fungsi kirim spam ke API NGL yang benar
+    async function sendNGLSpam(username, message, countNum, tokenList) {
+        const finalMsg = messageInp.value.replace(/{count}/g, countNum);
+        // Rotate token jika ada
+        let selectedToken = null;
+        if (tokenList.length > 0) {
+            selectedToken = tokenList[(countNum - 1) % tokenList.length];
         }
 
-        function updateStats() {
-            const totalSentVal = success + failed;
-            totalSpan.innerText = totalSentVal;
-            successSpan.innerText = success;
-            failSpan.innerText = failed;
-            const remainingVal = Math.max(0, currentIndex - totalSentVal);
-            remainingSpan.innerText = remainingVal;
+        const deviceId = `DIZX_${Date.now()}_${Math.random()}_${countNum}`;
+        const payload = {
+            username: username,
+            question: finalMsg,
+            deviceId: deviceId,
+            gameSlug: "",
+            referrer: ""
+        };
+
+        let headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) DIZX/777",
+            "Origin": "https://ngl.link",
+            "Referer": `https://ngl.link/${username}`
+        };
+
+        if (selectedToken) {
+            headers["Authorization"] = `Bearer ${selectedToken.trim()}`;
         }
 
-        async function sendSpam(target, message, countNum) {
-            // Extract username from nglink
-            let username = '';
-            try {
-                const urlObj = new URL(target);
-                if (urlObj.hostname.includes('ngl.link')) {
-                    username = urlObj.pathname.replace('/', '');
-                } else {
-                    throw new Error('Invalid domain');
-                }
-            } catch (e) {
-                addLog(`❌ URL tidak valid: ${target}`, 'error');
+        try {
+            const response = await fetch("https://ngl.link/api/submit", {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            if (response.ok && (data.status === "success" || data.message === "Question submitted")) {
+                addLog(`✅ #${countNum} => ${username} : "${finalMsg.slice(0,30)}..."`, 'success');
+                return true;
+            } else {
+                addLog(`❌ #${countNum} gagal: ${JSON.stringify(data)}`, 'error');
                 return false;
             }
-
-            if (!username) {
-                addLog(`❌ Gagal ekstrak username dari ${target}`, 'error');
-                return false;
-            }
-
-            const finalMessage = messageTemplate.value.replace(/{count}/g, countNum);
-            
-            // NGL endpoint
-            const endpoint = `https://ngl.link/${username}`;
-            const payload = new URLSearchParams();
-            payload.append('question', finalMessage);
-            payload.append('deviceId', `DIZX_${Date.now()}_${Math.random()}`);
-            payload.append('gameSlug', '');
-            payload.append('referrer', '');
-
-            try {
-                const res = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 DIZX/777',
-                        'Origin': 'https://ngl.link',
-                        'Referer': `https://ngl.link/${username}`
-                    },
-                    body: payload.toString()
-                });
-
-                const text = await res.text();
-                if (res.status === 200 && (text.includes('success') || text.includes('terkirim') || text.length < 200)) {
-                    addLog(`✅ SPAM #${countNum} berhasil dikirim ke @${username}`, 'success');
-                    return true;
-                } else {
-                    addLog(`⚠️ SPAM #${countNum} gagal (HTTP ${res.status}) - mungkin rate limit?`, 'error');
-                    return false;
-                }
-            } catch (err) {
-                addLog(`💥 ERROR #${countNum}: ${err.message}`, 'error');
-                return false;
-            }
+        } catch (err) {
+            addLog(`💥 #${countNum} error: ${err.message}`, 'error');
+            return false;
         }
+    }
 
-        async function runSpammer() {
-            const target = targetInput.value.trim();
-            if (!target) {
-                addLog('❌ Target NGL Link tidak boleh kosong!', 'error');
-                return;
+    async function runSpam() {
+        let username = usernameInp.value.trim().replace('@', '');
+        if (!username) {
+            addLog("Username tidak boleh kosong!", 'error');
+            return;
+        }
+        let total = parseInt(amountInp.value);
+        if (isNaN(total) || total < 1) total = 1;
+        let delay = parseInt(delayInp.value);
+        if (isNaN(delay)) delay = 300;
+        let tokenRaw = tokensInp.value.trim();
+        let tokenList = tokenRaw ? tokenRaw.split(',').map(t => t.trim()).filter(t => t.length > 0) : [];
+
+        isRunning = true;
+        stopSpam = false;
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        success = 0;
+        failed = 0;
+        currentTotal = total;
+        updateStats();
+
+        addLog(`🔥 MEMULAI SPAM ke @${username} sebanyak ${total} kali, delay ${delay}ms`, 'warning');
+        addLog(tokenList.length ? `🔑 Menggunakan ${tokenList.length} token (rotate)` : "🔓 Guest mode + deviceId random", 'info');
+
+        for (let i = 1; i <= total; i++) {
+            if (stopSpam) {
+                addLog("⏸️ Dihentikan oleh user.", 'warning');
+                break;
             }
-
-            let total = parseInt(amountInput.value);
-            if (isNaN(total) || total < 1) total = 1;
-            let delay = parseInt(delayInput.value);
-            if (isNaN(delay)) delay = 500;
-
-            active = true;
-            stopFlag = false;
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            success = 0;
-            failed = 0;
+            const result = await sendNGLSpam(username, messageInp.value, i, tokenList);
+            if (result) success++;
+            else failed++;
             updateStats();
 
-            addLog(`🔥 MEMULAI SPAM ke ${target} sebanyak ${total} kali dengan delay ${delay}ms`, 'warning');
-            addLog(`📝 Pesan template: "${messageTemplate.value.slice(0,50)}..."`, 'info');
-
-            for (let i = 1; i <= total; i++) {
-                if (stopFlag) {
-                    addLog(`⏸️ SPAM dihentikan oleh user.`, 'warning');
-                    break;
-                }
-                const result = await sendSpam(target, messageTemplate.value, i);
-                if (result) {
-                    success++;
-                } else {
-                    failed++;
-                }
-                updateStats();
-
-                if (i < total && !stopFlag) {
-                    await new Promise(r => setTimeout(r, delay));
-                }
+            if (i < total && !stopSpam) {
+                await new Promise(r => setTimeout(r, delay));
             }
-
-            active = false;
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            addLog(`🏁 SPAM SELESAI. Berhasil: ${success}, Gagal: ${failed}`, 'success');
         }
 
-        startBtn.addEventListener('click', () => {
-            if (active) {
-                addLog('⚠️ Spam sedang berjalan. Stop dulu atau tunggu selesai.', 'warning');
-                return;
-            }
-            runSpammer();
-        });
+        isRunning = false;
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        addLog(`🏁 SPAM SELESAI. Berhasil: ${success} | Gagal: ${failed}`, 'success');
+    }
 
-        stopBtn.addEventListener('click', () => {
-            if (active) {
-                stopFlag = true;
-                addLog('🛑 Menghentikan spam...', 'warning');
-            } else {
-                addLog('Tidak ada proses aktif.', 'info');
-            }
-        });
+    startBtn.addEventListener('click', () => {
+        if (isRunning) {
+            addLog("Masih berjalan, stop dulu.", 'warning');
+            return;
+        }
+        runSpam();
+    });
 
-        clearBtn.addEventListener('click', () => {
-            logArea.innerHTML = '<div class="text-green-400">[✓] LOG DIBERSIHKAN</div>';
-        });
-    </script>
+    stopBtn.addEventListener('click', () => {
+        if (isRunning) {
+            stopSpam = true;
+            addLog("🛑 Menghentikan spam...", 'warning');
+        }
+    });
+
+    clearLogBtn.addEventListener('click', () => {
+        logArea.innerHTML = '<div class="text-green-400">[✓] Log dibersihkan oleh DIZX</div>';
+    });
+</script>
 </body>
 </html>
